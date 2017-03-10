@@ -13,6 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
 apply plugin : 'eclipse-wtp'
+apply plugin: 'maven-publish'
 
 jar {
     baseName = 'myRestService'
@@ -21,6 +22,7 @@ jar {
 
 repositories {
     mavenCentral()
+    
 }
 
 sourceCompatibility = 1.8
@@ -30,3 +32,33 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+        groupId 'org.krishna.demo'
+            artifactId 'demo'
+            version '1.0'
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url "$buildDir/repo"
+        }
+    }
+}
+
